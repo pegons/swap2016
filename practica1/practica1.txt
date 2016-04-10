@@ -1,0 +1,16 @@
+#Generamos la clave en la maquina principal
+$ ssh-keygen -t dsa
+#autorizamos permisos ya que si no al copiar nos pondria acceso no permitido
+$ chmod 600 ~/.ssh/authorized_keys
+#copiamos el archivo de claves en la maquina secundaria
+ssh-copy-id -i .ssh/id_dsa.pub pedro@192.168.203.133
+#ahora cuando tenemos esto ya podemos realizar copias usando ssh o entrar a dicha maquina principal desde la maquina 2
+#sin necesidad de contraseña
+#pero para la actualizacion sin necesidad de un humano detras copiando ficheros 
+#abrimos el crontab usando
+$nano etc/crontab
+
+#y modificamos la ultima linea de modo que quede asi :
+
+* /5	* * *  scp -r pedro@192.168.203.133:/var/www/ /var/www/
+#y asi tenemos la carpeta www de la maquina2 cada 5 minutos actualizada segun lo que tenga la de la maquina 1
