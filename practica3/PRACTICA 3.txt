@@ -1,0 +1,93 @@
+ Comprobar el rendimiento de servidores web.
+
+Vamos a comprobar el rendimiento de nuestro servidor web que hemos montado previamente, midiendo tiempos atacando a nuestro servidor de manera
+individual a cada maquina y despues colocando un balanceador de carga para que haga una redireccion de las solicitudes que hacemos 50% 50% a nuestros servidores.
+
+Lo ideal seria :
+
+1. hay que usar la misma configuración hardware y software en todos los test que
+hagamos al sitio
+2. hay que usar la misma configuración de la red en todos los tests
+3. tomar nota de la carga del servidor usando los comandos top o uptime
+4. tomar varias medidas y obtener medias y desviación estándar
+5. puede ser necesario llevar a cabo tests no sólo con páginas estáticas simples,
+sino también con scripts CGI y PHP
+
+En primer lugar vamos a usar Apache Benchmark.
+
+ab -n 1000 -c 10 http://www.example.com/test.html
+Los parámetros indicados en la orden anterior le indican al benchmark que solicite la
+página con dirección http://www.example.com/test.html 1000 veces (-n 1000 indica el
+número de peticiones) y hacer esas peticiones concurrentemente de 10 en 10 (-c 10
+indica el nivel de concurrencia).
+
+la pagina requerida debe de ser la ip nuestra y nuestro nombre de pagina web  de esta forma : 
+
+ab -n 1000 -c 10 http://192.168.133.134/index.html
+
+Y si todo va bien nos aparecera esto:
+
+
+This is ApacheBench, Version 2.3 <$Revision: 655654 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd,
+http://www.zeustech.net/
+Licensed to The Apache Software Foundation,
+http://www.apache.org/
+Benchmarking maquina.com (be patient)
+Completed 100 requests
+Completed 200 requests
+Completed 300 requests
+Completed 400 requests
+Completed 500 requests
+Completed 600 requests
+Completed 700 requests
+Completed 800 requests
+Completed 900 requests
+Completed 1000 requests
+Finished 1000 requests
+Server Software: Apache/2.2.9
+Server Hostname: maquina.com
+Server Port: 80
+Document Path: /prueba.html
+Document Length: 100 bytes
+Concurrency Level: 10
+Time taken for tests: 0.474 seconds   //Campo que interesa
+Complete requests: 1000	              //Campo que interesa
+Failed requests: 0
+Write errors: 0
+Total transferred: 356000 bytes
+HTML transferred: 100000 bytes
+Requests per second: 2109.82 [#/sec] (mean)     //Campo que interesa
+Time per request: 4.740 [ms] (mean)
+Time per request: 0.474 [ms] (mean, across all concurrent
+requests)
+Transfer rate: 733.49 [Kbytes/sec] received
+Connection Times (ms)
+ min mean[+/-sd] median max
+Connect: 0 0 0.0 0 0
+Processing: 1 5 3.4 4 27
+Waiting: 1 5 3.4 4 27
+Total: 1 5 3.4 4 27
+Percentage of the requests served within a certain time (ms)
+ 50% 4
+ 66% 5
+ 75% 6
+ 80% 7
+ 90% 9
+ 95% 11
+ 98% 14
+ 99% 16
+100% 27 (longest request)
+
+al final los datos que nos da tras las pruebas son :
+*cada columna es :
+1.ataque a una maquina sin balanceador de carga.
+2.ataque a una maquina con balanceador de carga nginx.
+3.ataque a una maquina con balanceador de carga haproxy.
+
+Como resolución final se puede ver como haproxy da menos errores y tiempos mas cortos, pero esto es una prueba simple en 3 maquinas virtuales y no se puede tener toda
+la fiabilidad que quisieramos.
+
+
+
+
